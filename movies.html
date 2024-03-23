@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movies App</title>
+</head>
+<body>
+    <form id="movie-form">
+        <label for="title">Title:</label>
+        <input type="text" id="title" name="title">
+        <label for="rating">Rating:</label>
+        <input type="number" id="rating" name="rating" min="1" max="10">
+        <button type="submit">Submit</button>
+    </form>
+
+    <div id="sort-options">
+        <button id="sort-title-inc">Sort by Title (A-Z)</button>
+        <button id="sort-title-dec">Sort by Title (Z-A)</button>
+        <button id="sort-rating-inc">Sort by Rating (Low to High)</button>
+        <button id="sort-rating-dec">Sort by Rating (High to Low)</button>
+    </div>
+    
+    <div id="movie-container">
+        
+    </div>
+    <script src="https://code.jquery.com/jquery-3.3.1.js"></script>
+    <script>
+        let movies = [];
+        $(function() {
+            $("#movie-form").on("submit", function(event) {
+                event.preventDefault();
+                let title = $("#title").val();
+                let rating = $("#rating").val();
+                let newMovie = {title, rating};
+                movies.push(newMovie);
+
+                if (title.length < 2) {
+                    alert("Title must have at least 2 characters.");
+                    return;
+                }
+
+                $("#movie-container").append('<div class="movie-rating">' + title + ': ' + rating + ' <button class="remove-btn">Remove</button></div>');
+                $('#title').val('');
+                $('#rating').val('');
+            })
+
+            $('#movie-container').on('click', '.remove-btn', function(){
+                let index = $(this).parent('.movie-rating').index();
+                movies.splice(index, 1);
+                $(this).parent('.movie-rating').remove();
+            });
+
+            $('#sort-title-inc').click(function() {
+                let sortedMovies = sortMovies('title', 'inc', movies);
+                $('#movie-container').empty();
+                for (let movie of sortedMovies) {
+                    $("#movie-container").append('<div class="movie-rating">' + movie.title + ': ' + movie.rating + ' <button class="remove-btn">Remove</button></div>');
+                }
+            });
+
+            $('#sort-title-dec').click(function() {
+                let sortedMovies = sortMovies('title', 'dec', movies);
+                $('#movie-container').empty();
+                for (let movie of sortedMovies) {
+                    $("#movie-container").append('<div class="movie-rating">' + movie.title + ': ' + movie.rating + ' <button class="remove-btn">Remove</button></div>');
+                }
+            });
+
+            $('#sort-rating-inc').click(function() {
+                let sortedMovies = sortMovies('rating', 'inc', movies);
+                $('#movie-container').empty();
+                for (let movie of sortedMovies) {
+                    $("#movie-container").append('<div class="movie-rating">' + movie.title + ': ' + movie.rating + ' <button class="remove-btn">Remove</button></div>');
+                }
+            });
+
+            $('#sort-rating-dec').click(function() {
+                let sortedMovies = sortMovies('rating', 'dec', movies);
+                $('#movie-container').empty();
+                for (let movie of sortedMovies) {
+                    $("#movie-container").append('<div class="movie-rating">' + movie.title + ': ' + movie.rating + ' <button class="remove-btn">Remove</button></div>');
+                }
+            });
+
+        })
+
+        function sortMovies(key, orderBy, movies) {
+            return movies.sort(function(movie1, movie2) {
+                let val1 = movie1[key];
+                let val2 = movie2[key];
+
+                // Ensures that rating is a number
+                if (key === "rating") {
+                    val1 = +val1;
+                    val2 = +val2;
+                }
+
+                // Compare the two
+                if (orderBy === "inc") {
+                    if (val1 > val2) {
+                        return 1;
+                    }
+                    return -1;
+                } else if (orderBy === "dec") {
+                    if (val1 < val2) {
+                        return 1;
+                    }
+                    return -1;
+                }
+                return 0;
+                
+            });
+        }
+    </script>
+    
+</body>
+</html>
